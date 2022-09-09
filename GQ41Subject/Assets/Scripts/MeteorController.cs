@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //  Rigidbody2Dがアタッチされていないときの措置
 [RequireComponent(typeof(Rigidbody2D))]
@@ -47,6 +48,7 @@ public class MeteorController : MonoBehaviour
         playerController = playerObj.GetComponent<PlayerController>();
 
     }
+
     // Update is called once per frame
     void Update()
     {
@@ -61,10 +63,7 @@ public class MeteorController : MonoBehaviour
 
         meteorVertex = SpriteVertexList(topLeft, topRight, bottomLeft, bottomRight);
 
-        if (playerController.SelfCollision(meteorVertex))
-		{
-            Destroy(gameObject);
-		}
+        
     }
 
     Vector3 SpriteVertex(float X,float Y)
@@ -83,11 +82,18 @@ public class MeteorController : MonoBehaviour
         return Vector3s;
 	}
 
-	void OnCollisionEnter2D(Collision2D collision)
-	{
-        if(collision.transform.tag == "OutOfArea")
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.transform.tag == "OutOfArea")
+        {
+            Destroy(gameObject);
+        }
+
+        if (collision.transform.tag == "Player")
 		{
             Destroy(gameObject);
+            SceneManager.LoadScene("GameOverScene");
+
 		}
-	}
+    }
 }

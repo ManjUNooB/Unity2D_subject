@@ -27,6 +27,12 @@ public class BulletController : MonoBehaviour
 
         if (collision.gameObject.tag == "OutOfArea")
             Destroy(this.gameObject);
+
+        if (collision.gameObject.tag == "Enemey")
+		{
+            Destroy(this.gameObject);
+            Destroy(collision.gameObject);
+		}
 	}
  
 }

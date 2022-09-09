@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //  Rigidbody2Dがアタッチされていないときの措置
 [RequireComponent(typeof(Rigidbody2D))]
@@ -36,7 +37,9 @@ public class PlayerController : MonoBehaviour
 	Camera mainCamera;
 	Transform thisTransform;
 	Transform mainCameraTransform;
-	
+
+	VertexCollision vertexCollisionScript;
+
 
 	// Start is called before the first frame update
 	void Start()
@@ -47,6 +50,8 @@ public class PlayerController : MonoBehaviour
 		mainCameraTransform = mainCamera.transform;
 		rightTop = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, 0));
 		leftBottom = mainCamera.ScreenToWorldPoint(Vector3.zero);
+
+		vertexCollisionScript = this.gameObject.GetComponent<VertexCollision>();
 
 		//  コルーチンの停止処理をキャッシュしておく
 		//  こうするとメモリにゴミが発生しづらくなり高速化できるらしい
@@ -67,15 +72,23 @@ public class PlayerController : MonoBehaviour
 
 		if (fire && !firing) StartCoroutine(nameof(Fire));
 
-		
 	}
 
 	// Update is called once per frame
 	void FixedUpdate()
 	{
-		if (!IsActive)	return;
+		if (!IsActive) return;
 
 		MovePlayer();
+	}
+
+	private void OnCollisionEnter2D(Collision2D collision)
+	{
+		if(collision.transform.tag == "Enemy")
+		{
+			Destroy(gameObject);
+			SceneManager.LoadScene("GameOverScene");
+		}
 	}
 
 	void GetInput()
@@ -101,9 +114,9 @@ public class PlayerController : MonoBehaviour
 								(Vector3)mousePos - thisTransform.position), 0.1f);
 
 		//	移動
-		rigidBody.AddForce(thisTransform.up * forwardInput * powerToMove * rigidBody.mass, 
+		rigidBody.AddForce(thisTransform.up * forwardInput * powerToMove * rigidBody.mass,
 						   ForceMode2D.Force);
-		if (transform.position.x > rightTop.x) 
+		if (transform.position.x > rightTop.x)
 			transform.position = new Vector3(leftBottom.x, transform.position.y, 0);
 
 		if (transform.position.x < leftBottom.x)
@@ -126,13 +139,5 @@ public class PlayerController : MonoBehaviour
 		yield return fireIntervalWait;
 
 		firing = false;
-	}
-
-	public bool SelfCollision(List<Vector3> meteorVertex)
-	{
-		int hitCount = 0;
-		
-
-		return hitCount % 2 != 0; //奇数なら当たり
 	}
 }
