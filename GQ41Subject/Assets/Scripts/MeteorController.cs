@@ -9,7 +9,7 @@ public class MeteorController : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rigidBody = null;
 
-   // [SerializeField] BoxCollider2D meteorCollider2D = null;
+    [SerializeField] BoxCollider2D meteorCollider2D = null;
 
     [Min(1), Space]
     public int HP = 1;
@@ -81,5 +81,13 @@ public class MeteorController : MonoBehaviour
         Vector3s.Add(bottomRight);
 
         return Vector3s;
+	}
+
+	void OnCollisionEnter2D(Collision2D collision)
+	{
+        if(collision.transform.tag == "OutOfArea")
+		{
+            Destroy(gameObject);
+		}
 	}
 }
