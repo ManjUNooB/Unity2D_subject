@@ -128,7 +128,7 @@ public class PlayerController : MonoBehaviour
 		firing = false;
 	}
 
-	public static bool SelfCollision(Transform meteorTransform)
+	public bool SelfCollision(List<Vector3> meteorVertex)
 	{
 		int hitCount = 0;
 		
